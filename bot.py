@@ -33,15 +33,38 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = []
     for i in range(len(VIDEOS)):
         buttons.append(
-            [InlineKeyboardButton(f"🔓 Unlock Video {i+1}", url=MONETAG_LINK)]
+            [InlineKeyboardButton(f"🔓 Unlock Video {i+1}", url=f"{MONETAG_LINK}?video={i}")]
         )
 
     await update.message.reply_text(
-        "🎯 প্রতিটা ভিডিও দেখতে হলে আগে Ad দেখতে হবে 👇",
+        "🎯 প্রতিটা ভিডিও দেখতে হলে আগে Ad দেখতে হবে 👇\n\nAd দেখার পর লিখো:\n/unlock 0\n/unlock 1",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
 async def unlock(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("❌ উদাহরণ: /unlock 0")
+        return
+
     idx = int(context.args[0])
+
+    if idx < 0 or idx >= len(VIDEOS):
+        await update.message.reply_text("❌ ভুল ভিডিও নম্বর")
+        return
+
     await context.bot.send_video(
-        chat_id=update.effective_chat.id,)
+        chat_id=update.effective_chat.id,
+        video=VIDEOS[idx]
+    )
+
+def main():
+    app = ApplicationBuilder().token(TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("unlock", unlock))
+
+    print("Bot started...")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
