@@ -44,4 +44,4 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def unlock(update: Update, context: ContextTypes.DEFAULT_TYPE):
     idx = int(context.args[0])
     await context.bot.send_video(
-        chat_id=update.effective_chat.id,
+        chat_id=update.effective_chat.id,)
